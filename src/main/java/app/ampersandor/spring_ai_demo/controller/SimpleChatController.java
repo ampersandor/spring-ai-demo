@@ -3,14 +3,10 @@ package app.ampersandor.spring_ai_demo.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.ChatOptions;
-import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.template.st.StTemplateRenderer;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
-
-import java.util.Map;
 
 @RestController
 public class SimpleChatController {
