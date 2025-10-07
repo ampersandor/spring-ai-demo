@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringAiDemoApplication {
 
 	public static void main(String[] args) {
+		// Bootstraps the Spring context, auto-configuring Spring AI components declared in the config package.
 		SpringApplication.run(SpringAiDemoApplication.class, args);
 	}
 

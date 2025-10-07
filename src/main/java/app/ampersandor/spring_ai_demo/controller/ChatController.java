@@ -39,6 +39,10 @@ class ChatController {
         this.chatService = chatService;
     }
 
+    /**
+     * Handles a synchronous REST call and returns the raw {@link ChatResponse} produced by the LLM.
+     * The heavy lifting is delegated to {@link ChatService}; the controller only prepares the prompt structure.
+     */
     @Operation(
             summary = "단일 응답 채팅",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -66,6 +70,11 @@ class ChatController {
         return this.chatService.call(promptBody.conversationId(), promptBuilder.build());
     }
 
+    /**
+     * Builds a {@link Prompt} that can contain an optional system primer, the user message,
+     * and per-request chat options (temperature, max tokens, etc.).
+     * The conversation id travels separately so advisors (like ChatMemory) can stitch the dialogue together.
+     */
     private static Prompt.Builder getPromptBuilder(PromptBody promptBody) {
         List<Message> messages = new ArrayList<>();
         Optional.ofNullable(promptBody.systemPrompt()).filter(Predicate.not(String::isBlank))
@@ -76,6 +85,10 @@ class ChatController {
         return promptBuilder;
     }
 
+    /**
+     * Streams the assistant answer over Server-Sent Events (SSE).
+     * {@link ChatService#stream} emits a {@link Flux} so the client can render tokens as they arrive.
+     */
     @Operation(
             summary = "채팅 스트리밍 응답 (SSE)",
             description = "PromptBody를 받아 이벤트 스트림으로 응답을 반환합니다.",
@@ -108,6 +121,10 @@ class ChatController {
         return this.chatService.stream(promptBody.conversationId(), promptBuilder.build());
     }
 
+    /**
+     * Demonstrates how the same prompt structure can be used with different strong-typed projections.
+     * The response is deserialized into {@link EmotionEvaluation}, making the LLM behave like a classifier.
+     */
     @Operation(summary = "감정 평가 응답", description = "입력된 prompt에 대해 감정 평가를 수행하고 결과를 반환합니다.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,

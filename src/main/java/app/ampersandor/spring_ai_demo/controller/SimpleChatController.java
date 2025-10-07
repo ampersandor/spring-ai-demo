@@ -14,9 +14,14 @@ public class SimpleChatController {
     private final ChatClient chatClient;
 
     public SimpleChatController(ChatClient.Builder chatClientBuilder) {
+        // The builder encapsulates all auto-configured settings (model, API key, advisors).
         this.chatClient = chatClientBuilder.build();
     }
 
+    /**
+     * Simplest possible REST endpoint that forwards the query straight to the model.
+     * Options can be set fluently; here we raise the temperature to encourage creative answers.
+     */
     @GetMapping("/ai")
     String generation(String userPrompt) {
         return this.chatClient.prompt()
@@ -26,6 +31,10 @@ public class SimpleChatController {
                 .content();
     }
 
+    /**
+     * Token-by-token streaming variant of {@link #generation(String)}.
+     * The SSE media type instructs Spring WebFlux to keep the HTTP connection open.
+     */
     @GetMapping(value="/stream", produces= MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<String> stream(String userPrompt) {
         return this.chatClient.prompt()
