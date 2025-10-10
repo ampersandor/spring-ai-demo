@@ -29,7 +29,7 @@ public class ChatConfig {
     public ChatMemory chatMemory() {
         return MessageWindowChatMemory.builder()
                 // A different ChatMemoryRepository (e.g. Redis) can be plugged in here if persistence is required.
-                .maxMessages(10)
+                .maxMessages(20)
                 .build();
     }
 

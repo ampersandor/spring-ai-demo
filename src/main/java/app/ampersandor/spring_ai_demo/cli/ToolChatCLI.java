@@ -1,6 +1,6 @@
 package app.ampersandor.spring_ai_demo.cli;
 
-import app.ampersandor.spring_ai_demo.service.ChatService;
+import app.ampersandor.spring_ai_demo.service.ToolChatService;
 import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -13,16 +13,13 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Scanner;
 
 @Configuration
-@ConditionalOnProperty(name = "app.mode", havingValue = "chat")
-public class ChatCLI {
+@ConditionalOnProperty(name = "app.mode", havingValue = "tool")
+public class ToolChatCLI {
 
-    /**
-     * Provides a simple terminal experience for chatting with the configured model.
-     * The bean is only created when {@code spring.application.cli=true}, letting you opt-in via properties.
-     */
     @ConditionalOnProperty(prefix = "app.cli", name = "enabled", havingValue = "true")
     @Bean
-    public CommandLineRunner cli(@Value("${spring.application.name}") String applicationName, ChatService chatService) {
+    public CommandLineRunner toolCLI(@Value("${spring.application.name}") String applicationName,
+            ToolChatService toolChatService) {
         return args -> {
 
             LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -33,17 +30,15 @@ public class ChatCLI {
                 while (true) {
                     System.out.print("\nUSER: ");
                     String userMessage = scanner.nextLine();
-                    chatService.stream("cli", Prompt.builder().content(userMessage).build())
-                            // doFirst/doOn* are Reactor lifecycle hooks that let us print alongside the stream.
+                    toolChatService.stream("cli", Prompt.builder().content(userMessage).build())
                             .doFirst(() -> System.out.print("\nASSISTANT: "))
                             .doOnNext(System.out::print)
                             .doOnComplete(System.out::println)
+                            .doOnError(System.err::println)
                             .blockLast();
                 }
             }
         };
     }
-
-
 
 }

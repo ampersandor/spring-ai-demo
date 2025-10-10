@@ -6,10 +6,12 @@ import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
+@ConditionalOnProperty(name = "app.mode", havingValue = "chat")
 public class ChatService {
     private final ChatClient chatClient;
 

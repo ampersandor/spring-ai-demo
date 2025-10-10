@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Configuration
+@ConditionalOnProperty(name = "app.mode", havingValue = "rag")
 public class RagConfig {
 
     /**
@@ -141,15 +142,13 @@ public class RagConfig {
             Optional<DocumentPostProcessor> documentsPostProcessor) {
         RetrievalAugmentationAdvisor.Builder retrievalAugmentationAdvisorBuilder = RetrievalAugmentationAdvisor
                 .builder()
-                 .queryExpander(MultiQueryExpander.builder().chatClientBuilder(chatClientBuilder).build())
-                 .queryTransformers(TranslationQueryTransformer.builder().chatClientBuilder(chatClientBuilder)
-                 .targetLanguage("korean").build())
+                .queryExpander(MultiQueryExpander.builder().chatClientBuilder(chatClientBuilder).build())
+                .queryTransformers(TranslationQueryTransformer.builder().chatClientBuilder(chatClientBuilder)
+                        .targetLanguage("korean").build())
                 .queryAugmenter(ContextualQueryAugmenter.builder().allowEmptyContext(true).build())
                 .documentRetriever(VectorStoreDocumentRetriever.builder().similarityThreshold(0.3).topK(3)
-                        .vectorStore(vectorStore).build())
-        // .documentPostProcessors() // 뒤에서도 document post process 까지 이렇게 5개의 설정을 해볼 수
-        // 있다.
-        ;
+                        .vectorStore(vectorStore).build());
+        // .documentPostProcessors() // 뒤에서도 document post process 까지 이렇게 5개의 설정을 해볼 수 있다.;
         // RAG CLI 를 위해 등록
         documentsPostProcessor.ifPresent(retrievalAugmentationAdvisorBuilder::documentPostProcessors);
         return retrievalAugmentationAdvisorBuilder.build();

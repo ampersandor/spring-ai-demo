@@ -7,12 +7,14 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.Optional;
 
 @Service
+@ConditionalOnProperty(name = "app.mode", havingValue = "rag")
 public class RagChatService {
 
     private final ChatClient chatClient;

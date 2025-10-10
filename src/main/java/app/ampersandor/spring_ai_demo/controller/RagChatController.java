@@ -14,6 +14,7 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.DefaultChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("/rag")
+@ConditionalOnProperty(name = "app.mode", havingValue = "rag")
 class RagChatController {
 
     private final RagChatService ragChatService;
@@ -83,7 +85,7 @@ class RagChatController {
 
     /**
      * Utility used by both call and stream endpoints.
-     * The logic mirrors {@link app.ampersandor.spring_ai_demo.controller.ChatController#getPromptBuilder} but with RAG-specific types.
+     * The logic mirrors  but with RAG-specific types.
      */
     private static Prompt.Builder getPromptBuilder(RagPromptBody ragPromptBody) {
         List<Message> messages = new ArrayList<>();

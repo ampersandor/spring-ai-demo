@@ -15,6 +15,7 @@ import java.util.Scanner;
 import java.util.function.Predicate;
 
 @Configuration
+@ConditionalOnProperty(name = "app.mode", havingValue = "rag")
 public class RagChatCLI {
 
     /**
@@ -23,7 +24,7 @@ public class RagChatCLI {
      */
     @ConditionalOnProperty(prefix = "app.cli", name = "enabled", havingValue = "true")
     @Bean
-    public CommandLineRunner cli(@Value("${spring.application.name}") String applicationName,
+    public CommandLineRunner ragCLI(@Value("${spring.application.name}") String applicationName,
                                  RagChatService ragChatService,
                                  @Value("${app.cli.filter-expression:}") String filterExpression) {
         return args -> {

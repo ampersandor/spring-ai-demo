@@ -1,0 +1,79 @@
+# 어플리케이션 커스텀 옵션 추가
+app:
+  mode: tool # chat | rag | tool
+  rag:
+    documents-location-pattern: classpath:mafft.pdf
+  etl:
+    pipeline:
+      init: false
+  vectorstore:
+    in-memory:
+      enabled: false
+  cli:
+    enabled: true # CLI 모드 활성화 여부
+    filter-expression: ""
+  chat:
+    default-system-prompt: 한국어를 사용하는 tool 지원 AI 입니다. # 기본 system prompt
+
+logging:
+  level:
+    org:
+      springframework:
+        ai:
+          chat:
+            client:
+              advisor: DEBUG # SimpleLoggerAdvisor 등의 Advisor에서 DEBUG 로그 출력
+          tool: DEBUG # Tool 사용 과련 DEBUG 로그 출력
+  file:
+    path: log
+    name: log/${spring.application.name}.log
+
+spring:
+  application:
+    name: fast-campus-course-tool-chat # 어플리케이션 이름
+  messages:
+    encoding: UTF-8
+  ai:
+    model:
+      chat: openai # 여러 Chat 모델 사용시 auto-configurations 에서 사용할 모델 설정 필요 예: openai, ollama
+      embedding: ollama
+    openai:
+      api-key: ${OPENAI_API_KEY} # OpenAI 호출 API를 제공하는 Provider의 경우 아래 내용을 적절히 수정
+      chat:
+        options:
+          model: openai/gpt-4.1-nano # 모델명 설정
+        base-url: https://models.github.ai/inference # 설정하지 않으면 기본 OpenAI api 호출 주소를 사용
+        completions-path: /chat/completions # OpenAI 기본값은 /v1/chat/completions, github 모델 사용시 아래와 같이 수정
+    ollama:
+      init:
+        pull_model_strategy: when_missing
+      chat:
+        options:
+#          model: mistral # Structured Output, Tool Calling 사용시 mistral (7B q4 기본 모델로 약 7GB 메모리 필요) 사용
+          model: hf.co/rippertnt/HyperCLOVAX-SEED-Text-Instruct-1.5B-Q4_K_M-GGUF
+      embedding:
+        options:
+          model: bge-m3
+
+    vectorstore:
+      opensearch:
+        uris: http://localhost:9200
+        index-name: spring-ai-document-index
+        initialize-schema: true
+        dimension: 1024
+        similarity-function: cosinesimil
+#spring.ai.vectorstore.opensearch.aws.host=<aws opensearch host>
+#spring.ai.vectorstore.opensearch.aws.service-name=<aws service name>
+#spring.ai.vectorstore.opensearch.aws.access-key=<aws access key>
+#spring.ai.vectorstore.opensearch.aws.secret-key=<aws secret key>
+#spring.ai.vectorstore.opensearch.aws.region=<aws region>
+#
+#spring.elasticsearch.uris=http://localhost:9200
+#spring.elasticsearch.username=<elasticsearch username>
+#spring.elasticsearch.password=<elasticsearch password>
+#
+#spring.ai.vectorstore.elasticsearch.initialize-schema=true
+#spring.ai.vectorstore.elasticsearch.index-name=spring-ai-document-index
+#
+#spring.ai.vectorstore.elasticsearch.dimensions=1024
+#spring.ai.vectorstore.elasticsearch.similarity=cosine
